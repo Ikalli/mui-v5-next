@@ -1,27 +1,36 @@
 import React from 'react';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
-import { ServerStyleSheets } from '@material-ui/core/styles';
+import createEmotionServer from '@emotion/server/create-instance';
 import type { DocumentContext } from 'next/document';
+
+import createEmotionCache from 'emotion-cache';
 
 export default class CustomDocument extends Document {
     static async getInitialProps(context: DocumentContext) {
-        /* Render app and page and get the context of the page with 
-        collected side effects. */
-        const sheets = new ServerStyleSheets();
         const originalRenderPage = context.renderPage;
-        
+
+        const cache = createEmotionCache();
+        const { extractCriticalToChunks } = createEmotionServer(cache);
+
         context.renderPage = () => originalRenderPage({
-            enhanceApp: App => props => sheets.collect(<App { ...props } />)
+            // eslint-disable-next-line react/display-name
+            enhanceApp: (App: any) => props => <App emotionCache={cache} { ...props } />
         });
 
         const initialProps = await Document.getInitialProps(context);
+        const emotionStyles = extractCriticalToChunks(initialProps.html);
+        const emotionStyleTags = emotionStyles.styles.map((style) => (
+            <style
+            key={style.key}
+            data-emotion={`${style.key} ${style.ids.join(' ')}`}
+            dangerouslySetInnerHTML={{ __html: style.css }} />
+        ));
 
         return {
             ...initialProps,
-            // Styles fragment is rendered after the app and page rendering finish
-            styles: [ 
+            styles: [
                 ...React.Children.toArray(initialProps.styles), 
-                sheets.getStyleElement()
+                ...emotionStyleTags
             ]
         }
     }

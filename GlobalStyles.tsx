@@ -1,19 +1,19 @@
 import React from 'react';
-import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createTheme, ThemeProvider, StyledEngineProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 const theme = createTheme({
-    overrides: {
+    components: {
         MuiCssBaseline: {
-            '@global': {
-                body: {
-                    backgroundColor: '#151515',
-                    fontFamily: 'Helvetica, sans-serif',
-                    fontWeight: 600,
-                    letterSpacing: '-0.05rem',
-                    color: '#FFF'
+            styleOverrides: `
+                body {
+                    background-color: #151515;
+                    font-family: Helvetica, sans-serif;
+                    font-weight: 600;
+                    letter-spacing: -0.05rem;
+                    color: #FFF;
                 }
-            }
+            `
         }
     },
     typography: {
@@ -22,10 +22,12 @@ const theme = createTheme({
 });
 
 const GlobalStyles: React.FC = (props) => (
-    <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {props.children}
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            {props.children}
+        </ThemeProvider>
+    </StyledEngineProvider>
 );
 
 export default GlobalStyles;

@@ -1,25 +1,28 @@
-import { useEffect } from 'react';
-import type { AppProps } from 'next/app';
+import { CacheProvider } from '@emotion/react';
+import type { AppProps as NextAppProps } from 'next/app';
+import type { EmotionCache } from '@emotion/react';
+
+import createEmotionCache from 'emotion-cache';
 
 import AppBar from 'components/AppBar';
 import GlobalStyles from 'GlobalStyles';
 
-const App = (props: AppProps) => {
-    const { Component, pageProps } = props;
+interface AppProps extends NextAppProps {
+    emotionCache?: EmotionCache;
+}
 
-    // Remove the server-side injected CSS
-    useEffect(() => {
-        const jssStyles = document.querySelector('#jss-server-side');
-        if (jssStyles) {
-            jssStyles.parentElement!.removeChild(jssStyles);
-        }
-    }, []);
+const clientEmotionCache = createEmotionCache();
+
+const App = (props: AppProps) => {
+    const { Component, pageProps, emotionCache = clientEmotionCache } = props;
 
     return (
-        <GlobalStyles>
-            <AppBar />
-            <Component { ...pageProps } />
-        </GlobalStyles>
+        <CacheProvider value={emotionCache}>
+            <GlobalStyles>
+                <AppBar />
+                <Component { ...pageProps } />
+            </GlobalStyles>
+        </CacheProvider>
     );
 }
 

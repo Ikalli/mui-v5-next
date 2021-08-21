@@ -1,4 +1,4 @@
-import { createStyles } from '@material-ui/core/styles';
+import createStyles from '@material-ui/styles/createStyles';
 import type { Theme } from '@material-ui/core/styles';
 
 const styles = (theme: Theme) => createStyles({
@@ -10,7 +10,7 @@ const styles = (theme: Theme) => createStyles({
         transition: 'opacity 600ms',
         zIndex: 50,
 
-        [theme.breakpoints.down('xs')]: { 
+        [theme.breakpoints.down('sm')]: { 
             height: 70,
             '& .MuiToolbar-gutters': { paddingLeft: '2.5vw' }
         }
