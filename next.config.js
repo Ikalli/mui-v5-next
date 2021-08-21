@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-  reactStrictMode: true,
+    // Commented out because of classnames mismatch with MUI v4
+//   reactStrictMode: true,
 }
